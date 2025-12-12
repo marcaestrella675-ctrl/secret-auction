@@ -210,7 +210,7 @@ export default function AuctionPage() {
    * 3. Create EIP-712 signature
    * 4. Call userDecrypt to get result
    */
-  const handleDecryptResult = async (retryCount = 0) => {
+  const handleDecryptResult = async () => {
     if (!fhevmInstance || !walletClient || !address) {
       setError('Please connect your wallet first');
       return;
@@ -281,17 +281,6 @@ export default function AuctionPage() {
 
     } catch (e: any) {
       console.error('❌ Decryption failed:', e);
-      
-      // Auto-retry on 500 error (permission sync issue)
-      if (e.message?.includes('500') && retryCount < 3) {
-        const waitTime = (retryCount + 1) * 10;
-        console.log(`⚠️ Retry ${retryCount + 1}/3 after ${waitTime}s...`);
-        setError(`Retrying... (${retryCount + 1}/3)`);
-        
-        await new Promise(resolve => setTimeout(resolve, waitTime * 1000));
-        return handleDecryptResult(retryCount + 1);
-      }
-      
       setError(e.message || 'Failed to decrypt result');
     } finally {
       setIsDecrypting(false);
@@ -481,7 +470,7 @@ export default function AuctionPage() {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Decrypting... (30-60s)
+                      Decrypting...
                     </span>
                   ) : (
                     <span className="flex items-center justify-center">
