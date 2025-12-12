@@ -19,8 +19,8 @@ const FHEVM_CONFIG = {
   relayerUrl: 'https://relayer.testnet.zama.org',
 };
 
-// Contract Configuration (will be set after deployment)
-const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '';
+// Contract Configuration - Hardcoded for Vercel deployment
+const CONTRACT_ADDRESS = '0x3Cc4604E23D095AE4662ed9683F22c97559293fb';
 const CONTRACT_ABI = [
   "function submitBid(bytes32 encryptedBid, bytes proof) external",
   "function getMyResult() external view returns (bytes32)",
@@ -48,7 +48,6 @@ export default function AuctionPage() {
   const [isDecrypting, setIsDecrypting] = useState(false);
   const [hasBidSubmitted, setHasBidSubmitted] = useState(false);
   const [canDecrypt, setCanDecrypt] = useState(false);
-  const [countdown, setCountdown] = useState(0);
   const [result, setResult] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +56,6 @@ export default function AuctionPage() {
     setBidAmount('');
     setHasBidSubmitted(false);
     setCanDecrypt(false);
-    setCountdown(0);
     setResult(null);
     setError(null);
     console.log('🔄 Reset for new bid');
@@ -193,18 +191,9 @@ export default function AuctionPage() {
       setHasBidSubmitted(true);
       setBidAmount('');
 
-      // Step 3: Start countdown for permission sync
-      setCountdown(10);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setCanDecrypt(true);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      // Step 3: Allow decryption immediately
+      setCanDecrypt(true);
+      console.log('✅ Ready to decrypt');
 
     } catch (e: any) {
       console.error('❌ Bid submission failed:', e);
@@ -469,17 +458,6 @@ export default function AuctionPage() {
                 <p className="text-xs text-gray-500 mt-3 text-center">
                   💡 Hint: The reserve price is 1000. Try bidding above or below to see results.
                 </p>
-              </div>
-            )}
-
-            {/* Waiting for Permission Sync */}
-            {hasBidSubmitted && countdown > 0 && (
-              <div className="text-center">
-                <div className="w-16 h-16 bg-yellow-500/10 border-2 border-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-yellow-500">{countdown}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-2">Syncing Permissions...</h3>
-                <p className="text-gray-400">Please wait {countdown} seconds for blockchain confirmation</p>
               </div>
             )}
 
