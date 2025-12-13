@@ -490,7 +490,7 @@ export default function AuctionPage() {
             {/* Result Display */}
             {result !== null && (
               <div className="text-center">
-                {result === 1 ? (
+                {Number(result) === 1 ? (
                   <div>
                     <div className="w-20 h-20 bg-green-500/10 border-4 border-green-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
                       <svg className="w-12 h-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
